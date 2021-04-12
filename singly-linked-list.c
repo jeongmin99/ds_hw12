@@ -230,15 +230,26 @@ int insertLast(headNode* h, int key) {
 	node->link=NULL;
 	listNode* cur;
 
-	cur=h->first;
-	while(cur->link!=NULL)
+	if(h->first==NULL)
 	{
-		cur=cur->link;
+		node->link=h->first;
+		h->first=node;
+	}
+	else
+	{
+		cur=h->first;
+		while(cur->link!=NULL)
+		{
+			cur=cur->link;
+		}
+
+		cur->link=node;
+		node->link=NULL;
+
 	}
 
-	cur->link=node;
-	node->link=NULL;
 	return 0;
+
 }
 
 
