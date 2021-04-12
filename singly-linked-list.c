@@ -177,7 +177,14 @@ int insertNode(headNode* h, int key) {
 			if(key<cur->key)
 			{
 				node->link=cur;
-				prev->link=node;
+				if(prev==NULL)
+				{
+					h->first=node;
+				}
+				else
+				{
+					prev->link=node;
+				}
 				return 0;
 
 			}
@@ -304,6 +311,18 @@ int deleteNode(headNode* h, int key) {
  */
 int deleteLast(headNode* h) {
 
+	listNode* cur;
+	listNode* prev;
+	cur=h->first;
+	prev=NULL;
+	while(cur->link!=NULL)
+	{
+		prev=cur;
+		cur=cur->link;
+	}
+
+	prev->link=NULL;
+	free(cur);
 	return 0;
 }
 
@@ -313,6 +332,22 @@ int deleteLast(headNode* h) {
  */
 int invertList(headNode* h) {
 
+	listNode*cur;
+	listNode* prev;
+	listNode* middle;
+
+	cur=h->first;
+	middle=NULL;
+
+	while(cur)
+	{
+		prev=middle;
+		middle=cur;
+		cur=cur->link;
+		middle->link=prev;
+	}
+
+	h->first=middle;
 	return 0;
 }
 
