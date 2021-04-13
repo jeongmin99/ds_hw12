@@ -43,6 +43,7 @@ int main()
 	int key;
 	headNode* headnode=NULL;
 	setvbuf(stdout, NULL, _IONBF, 0);
+	printf("[----- [이정민] [2018038030] -----]");
 	do{
 
 		printf("----------------------------------------------------------------\n");
@@ -271,6 +272,7 @@ int deleteFirst(headNode* h) {
 		free(cur);//탐색노드 해제
 		return 0;
 	}
+	return 0;
 
 }
 
@@ -325,7 +327,7 @@ int deleteNode(headNode* h, int key) {
 
 			return 0;
 	}
-
+	return 0;
 }
 
 /**
@@ -349,6 +351,8 @@ int deleteLast(headNode* h) {
 			free(cur);//탐색 노드 해제
 			return 0;
 	}
+
+	return 0;
 }
 
 
@@ -376,6 +380,8 @@ int invertList(headNode* h) {
 			h->first=middle;//first를 middle노드로 설정
 			return 0;
 	}
+
+	return 0;
 
 }
 
