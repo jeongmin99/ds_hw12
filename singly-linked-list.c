@@ -123,15 +123,15 @@ int freeList(headNode* h){
 	/* h와 연결된 listNode 메모리 해제
 	 * headNode도 해제되어야 함.
 	 */
-	listNode* p = h->first;
+	listNode* p = h->first;//노드 p를 first로 둠
 
-	listNode* prev = NULL;
-	while(p != NULL) {
-		prev = p;
-		p = p->link;
-		free(prev);
+	listNode* prev = NULL;//이전 노드인 prev를 NULL로 둠
+	while(p != NULL) {//p가 존재하는 동안
+		prev = p;//이전노드 갱신
+		p = p->link;//p를 다음 노드로
+		free(prev);//prev 노드 해제
 	}
-	free(h);
+	free(h);//headNode 메모리 해제
 	return 0;
 }
 
@@ -142,11 +142,11 @@ int freeList(headNode* h){
  */
 int insertFirst(headNode* h, int key) {
 
-	listNode* node = (listNode*)malloc(sizeof(listNode));
-	node->key = key;
+	listNode* node = (listNode*)malloc(sizeof(listNode));//노드 하나 생성
+	node->key = key;//노드 키값 설정
 
 	node->link = h->first;//node->link=NULL
-	h->first = node;
+	h->first = node;//first를 노드로 설정
 
 	return 0;
 }
@@ -158,58 +158,61 @@ int insertNode(headNode* h, int key) {
 	listNode* node=(listNode*)malloc(sizeof(listNode));
 	node->key=key;
 	node->link=NULL;
-	listNode* cur;
-	listNode* prev;
+	/* 노드 초기 설정*/
 
-	if(h->first==NULL)
+	listNode* cur;//탐색 노드
+	listNode* prev;//탐색 노드의 이전 노드
+
+	if(h->first==NULL)//first가 없으면
 	{
-		node->link=h->first;
-		h->first=node;
+		node->link=h->first;//node->link=NULL
+		h->first=node;//노드를 first로 설정
 
 	}
 	else
 	{
-		cur=h->first;
-		prev=NULL;
+		cur=h->first;//탐색 노드 위치 first로 세팅
+		prev=NULL;//이전노드는 NULL
 
-		while(cur->link!=NULL)
+		while(cur->link!=NULL)//탐색노드의 다음노드가 존재하는 동안
 		{
-			if(key<cur->key)
+			if(key<cur->key)//key값이 탐색한 노드의 키값보다 작으면
 			{
-				node->link=cur;
-				if(prev==NULL)
+				node->link=cur;//노드의 다음노드는 탐색 노드
+				if(prev==NULL)//이전노드가 없으면(탐색노드 가 맨 앞 노드였으면)
 				{
-					h->first=node;
+					h->first=node;//노드를 first로 설정
 				}
-				else
+				else//노드와 노드 사이에 넣는 경우(prev존재)
 				{
-					prev->link=node;
+					prev->link=node;//prev의 다음 노드를 노드로 설정
 				}
 				return 0;
 
 			}
 
-			prev=cur;
-			cur=cur->link;
+			prev=cur;//prev노드 갱신
+			cur=cur->link;//탐색 노드 이동
 		}
 
-		if(key<cur->key)
+  /*마지막 노드에 도착했을때*/
+		if(key<cur->key)//key값이 탐색한 노드의 키값보다 작으면(현재 마지막 노드 앞이 위치해야하는 경우)
 		{
-			node->link=cur;
-			if(prev==NULL)
+			node->link=cur;//노드의 다음 노드를 탐색노드로 설정
+			if(prev==NULL)//이전 노드가 없는 경우
 			{
 
-				h->first=node;
+				h->first=node;//노드를 first로 설정
 			}
 			else
 			{
-				prev->link=node;
+				prev->link=node;////prev의 다음 노드를 노드로 설정
 			}
 		}
-		if(key>=cur->key)
+		if(key>=cur->key)//키 값이 탐색 노드의 키값 보다 큰 경우
 		{
-			cur->link=node;
-			node->link=NULL;
+			cur->link=node;//탐색 노드의 다음 노드를 노드로 설정
+			node->link=NULL;//노드의 다음 노드는 NULL(노드는 마지막 노드)
 			return 0;
 		}
 
@@ -228,23 +231,24 @@ int insertLast(headNode* h, int key) {
 	listNode* node=(listNode*)malloc(sizeof(listNode));
 	node->key=key;
 	node->link=NULL;
-	listNode* cur;
+	/* 노드 생성*/
+	listNode* cur;//탐색 노드
 
-	if(h->first==NULL)
+	if(h->first==NULL)//first가 없다면
 	{
-		node->link=h->first;
-		h->first=node;
+		node->link=h->first;//노드의 다음 노드는 first
+		h->first=node;//first를 노드로 설정
 	}
 	else
 	{
-		cur=h->first;
-		while(cur->link!=NULL)
+		cur=h->first;//탐색 노드를 first로 설정
+		while(cur->link!=NULL)//탐색 노드의 다음노드가 없을 때까지(마지막 노드까지)
 		{
-			cur=cur->link;
+			cur=cur->link;//탐색노드를 다음으로 이동
 		}
 
-		cur->link=node;
-		node->link=NULL;
+		cur->link=node;//탐색노드의 다음 노드를 노드로 설정
+		node->link=NULL;//노드의 다음노드를 NULL로 설정
 
 	}
 
@@ -259,11 +263,15 @@ int insertLast(headNode* h, int key) {
 int deleteFirst(headNode* h) {
 
 
-	listNode* cur;
-	cur=h->first;
-	h->first=cur->link;
-	free(cur);
-	return 0;
+	listNode* cur;//탐색노드 설정
+	if(h->first!=NULL)//first가 존재하면
+	{
+		cur=h->first;//탐색노드를 first로 설정
+		h->first=cur->link;//first를 탐색노드의 다음노드로 설정
+		free(cur);//탐색노드 해제
+		return 0;
+	}
+
 }
 
 
@@ -272,48 +280,51 @@ int deleteFirst(headNode* h) {
  */
 int deleteNode(headNode* h, int key) {
 
-	listNode* cur;
-	listNode* prev;
-	cur=h->first;
-	prev=NULL;
-	while(cur->link!=NULL)
+	listNode* cur;//탐색노드
+	listNode* prev;//탐색 노드의 이전 노드
+	if(h->first!=NULL)//first가 존재하면
 	{
-		if(cur->key==key)
-		{
-			if(prev==NULL)
+			cur=h->first;//탐색노드를 first로 설정
+			prev=NULL;//이전 노드 NULL
+			while(cur->link!=NULL)//탐색 노드의 다음 노드가 존재하는 동안
 			{
-				h->first=cur->link;
-				free(cur);
+				if(cur->key==key)//탐색노드의 키값이 찾는 값과 같으면
+				{
+					if(prev==NULL)//이전 노드가 존재하지 않으면(탐색 노드가 맨 앞이면)
+					{
+						h->first=cur->link;//탐색노드의 다음 노드를 first로 설정
+						free(cur);//탐색노드 해제
+					}
+					else
+					{
+						prev->link=cur->link;//이전노드의 다음 노드는 탐색 노드의 다음 노드
+						free(cur);//탐색 노드 해제
+					}
+
+					return 0;
+				}
+
+				prev=cur;//이전 노드 갱신
+				cur=cur->link;//탐색 노드를 다음으로 이동
 			}
-			else
+
+			/*마지막 노드에 대한 처리*/
+			if(cur->key==key)//만약 탐색노드 키값이 찾는 값과 같으면
 			{
-				prev->link=cur->link;
-				free(cur);
+				if(prev==NULL)//prev가 존재하지 않으면
+				{
+					h->first=cur->link;//first를 탐색 노드의 다음 노드로 설정
+					free(cur);//탐색 노드 해제
+				}
+				else
+				{
+					prev->link=cur->link;//이전노드의 다음 노드는 탐색 노드의 다음 노드로 설정
+					free(cur);//탐색 노드 해제
+				}
 			}
 
 			return 0;
-		}
-
-		prev=cur;
-		cur=cur->link;
 	}
-
-
-	if(cur->key==key)
-	{
-		if(prev==NULL)
-		{
-			h->first=cur->link;
-			free(cur);
-		}
-		else
-		{
-			prev->link=cur->link;
-			free(cur);
-		}
-	}
-
-	return 0;
 
 }
 
@@ -322,19 +333,22 @@ int deleteNode(headNode* h, int key) {
  */
 int deleteLast(headNode* h) {
 
-	listNode* cur;
-	listNode* prev;
-	cur=h->first;
-	prev=NULL;
-	while(cur->link!=NULL)
+	listNode* cur;//탐색 노드
+	listNode* prev;//탐색 노드의 이전 노드
+	if(h->first!=NULL)//first가 존재하면
 	{
-		prev=cur;
-		cur=cur->link;
-	}
+			cur=h->first;//탐색 노드를  first로 설정
+			prev=NULL;//이전노드를 NULL로 설정
+			while(cur->link!=NULL)//탐색 노드의 다음 노드가 존재하는 동안
+			{
+				prev=cur;//이전노드 갱신
+				cur=cur->link;//탐색 노드 이동
+			}
 
-	prev->link=NULL;
-	free(cur);
-	return 0;
+			prev->link=NULL;//이전노드의 다음 노드를 NULL로 설정
+			free(cur);//탐색 노드 해제
+			return 0;
+	}
 }
 
 
@@ -343,45 +357,48 @@ int deleteLast(headNode* h) {
  */
 int invertList(headNode* h) {
 
-	listNode*cur;
-	listNode* prev;
-	listNode* middle;
+	listNode*cur;//탐색 노드
+	listNode* prev;//탐색 노드의 이전 노드
+	listNode* middle;//탐색 노드를 임시적으로 저장해놓을 노드
 
-	cur=h->first;
-	middle=NULL;
-
-	while(cur)
+	if(h->first!=NULL)//fist가 존재하면
 	{
-		prev=middle;
-		middle=cur;
-		cur=cur->link;
-		middle->link=prev;
+		cur=h->first;//탐색 노드를 first로 설정
+		middle=NULL;//middle을 NULL로 설정
+		while(cur)//탐색 노드가 존재하는 동안
+			{
+				prev=middle;//이전 노드를 middle로 갱신
+				middle=cur;//middle에 탐색 노드 값 저장
+				cur=cur->link;//탐색 노드 이동
+				middle->link=prev;//middle의 다음 노드를 이전 노드로 설정
+			}
+
+			h->first=middle;//first를 middle노드로 설정
+			return 0;
 	}
 
-	h->first=middle;
-	return 0;
 }
 
-
+/* 리스트 출력*/
 void printList(headNode* h) {
-	int i = 0;
-	listNode* p;
+	int i = 0;//리스트 원소 번호
+	listNode* p;//탐색 노드
 
 	printf("\n---PRINT\n");
 
-	if(h == NULL) {
+	if(h == NULL) {//Initialize 안한 경우
 		printf("Nothing to print....\n");
 		return;
 	}
 
-	p = h->first;
+	p = h->first;//탐색 노드를 first로 설정
 
-	while(p != NULL) {
-		printf("[ [%d]=%d ] ", i, p->key);
-		p = p->link;
-		i++;
+	while(p != NULL) {//탐색 노드가 존재하는 동안
+		printf("[ [%d]=%d ] ", i, p->key);//노드의 번호와 키값 출력
+		p = p->link;//탐색 노드 이동
+		i++;//번호 증가
 	}
 
-	printf("  items = %d\n", i);
+	printf("  items = %d\n", i);//원소 총 번호 출력
 }
 
