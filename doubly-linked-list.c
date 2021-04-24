@@ -4,7 +4,7 @@
  *  Doubly Linked List
  *
  *  Data Structures
- *  Department of Computer Science 
+ *  Department of Computer Science
  *  at Chungbuk National University
  *
  */
@@ -214,22 +214,24 @@ int insertLast(headNode* h, int key) {
 int deleteLast(headNode* h) {
 
 	listNode* cur;
+	listNode* prev;
 	if(h->first!=NULL)
 	{
 		cur=h->first;
+		prev=NULL;
 		while(cur->rlink!=NULL)
 		{
 			cur=cur->rlink;
 		}
 
-		if(cur->llink==NULL)
+		if(prev==NULL)
 		{
 			h->first=NULL;
 			free(cur);
 		}
 		else
 		{
-			cur->llink->rlink=NULL;
+			prev->rlink=NULL;
 			free(cur);
 		}
 	}
@@ -284,6 +286,24 @@ int deleteFirst(headNode* h) {
  */
 int invertList(headNode* h) {
 
+	listNode* cur;
+	listNode* prev;
+	listNode* middle;
+
+	if(h->first!=NULL)
+	{
+		cur=h->first;
+		middle=NULL;
+		while(cur!=NULL)
+		{
+			prev=middle;
+			middle=cur;
+			cur=cur->rlink;
+			middle->rlink=prev;
+		}
+
+		h->first=middle;
+	}
 	return 0;
 }
 
@@ -292,7 +312,68 @@ int invertList(headNode* h) {
 /* 리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 */
 int insertNode(headNode* h, int key) {
 
+	listNode* newNode=(listNode*)malloc(sizeof(listNode));
+	newNode->key=key;
+	newNode->llink=NULL;
+	newNode->rlink=NULL;
 
+	listNode* cur;
+	listNode* prev;
+	if(h->first==NULL)
+	{
+		h->first=newNode;
+	}
+	else
+	{
+		cur=h->first;
+		prev=NULL;
+		while(cur->rlink!=NULL)
+		{
+			if(cur->key>key)
+			{
+				newNode->rlink=cur;
+
+				if(prev==NULL)
+				{
+					cur->llink=newNode;
+					h->first=newNode;
+				}
+				else
+				{
+					prev->rlink=newNode;
+					newNode->llink=prev;
+					prev=newNode;
+				}
+			}
+
+			prev=cur;
+			cur=cur->rlink;
+		}
+		if(cur->key>key)
+		{
+			newNode->rlink=cur;
+
+			if(prev==NULL)
+			{
+				prev=newNode;
+				h->first=newNode;
+			}
+			else
+			{
+				prev->rlink=newNode;
+				newNode->llink=prev;
+				prev=newNode;
+			}
+			return 0;
+		}
+		if(cur->key<=key)
+		{
+			cur->rlink=newNode;
+			newNode->llink=cur;
+			return 0;
+		}
+
+	}
 	return 0;
 }
 
@@ -301,6 +382,53 @@ int insertNode(headNode* h, int key) {
  */
 int deleteNode(headNode* h, int key) {
 
+	listNode* cur;
+	listNode* prev;
+
+	if(h->first!=NULL)
+	{
+		cur=h->first;
+		prev=NULL;
+		while(cur->rlink!=NULL)
+		{
+			if(cur->key==key)
+			{
+				if(prev==NULL)
+				{
+					h->first=cur->rlink;
+					free(cur);
+				}
+				else
+				{
+					prev->rlink=cur->rlink;
+					cur->rlink->llink=prev;
+					free(cur);
+
+				}
+
+				return 0;
+			}
+
+			prev=cur;
+			cur=cur->rlink;
+		}
+
+		if(cur->key==key)
+		{
+			if(prev==NULL)
+			{
+				h->first=cur->rlink;
+				free(cur);
+			}
+			else
+			{
+				prev->rlink=cur->rlink;
+				free(cur);
+			}
+		}
+
+
+	}
 	return 0;
 }
 
