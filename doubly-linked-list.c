@@ -108,7 +108,7 @@ int main()
 			invertList(headnode);
 			break;
 		case 'q': case 'Q':
-			freeList(&headnode);
+			freeList(headnode);
 			break;
 		default:
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
@@ -334,6 +334,7 @@ int insertNode(headNode* h, int key) {
 				if(cur->llink==NULL)//탐색 노드의 이전노드가 없으면(맨 앞이면)
 				{
 					cur->llink=newNode;//탐색 노드의 이전노드는 새로운 노드
+					h->first=newNode;//헤드 노드를 새로운 노드로 설정
 				}
 				else
 				{
@@ -353,6 +354,7 @@ int insertNode(headNode* h, int key) {
 			if(cur->llink==NULL)//탐색노드의 이전노드가 없으면(노드가 유일하면)
 			{
 				cur->llink=newNode;//탐색노드의 이전노드는 새로운 노드
+				h->first=newNode;//헤드 노드를 새로운 노드로 설정
 			}
 			else
 			{
