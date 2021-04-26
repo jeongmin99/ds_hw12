@@ -210,12 +210,8 @@ int deleteLast(listNode* h) {
 	{
 		cur=cur->rlink;
 	}
-	if(cur->llink==h)
-	{
-		h->llink=h;
-		h->rlink=h;
-	}
-	else
+
+	if(cur!=h)
 	{
 		cur->llink->rlink=cur->rlink;
 		cur->rlink->llink=cur->llink;
