@@ -124,14 +124,18 @@ int initialize(listNode** h) {
 /* 메모리 해제 */
 int freeList(listNode* h){
 
-	listNode* p=h;
-	listNode* prev=NULL;
-	while(p!=NULL)
+
+	listNode* p = h->llink;
+	listNode* tmp;
+
+	while (p != h)
 	{
-		prev=p;
-		p=p->rlink;
-		free(prev);
+		tmp = p;
+		p = p->llink;
+		free(tmp);
 	}
+
+	free(h);
 	return 0;
 }
 
@@ -185,16 +189,17 @@ int insertLast(listNode* h, int key) {
 	newNode->llink=NULL;
 	newNode->rlink=NULL;
 
-	listNode* cur=h;
+	listNode* cur=h->rlink;
 	while(cur->rlink!=h)
 	{
 		cur=cur->rlink;
 	}
 
+	newNode->rlink=cur->rlink;
+	cur->rlink->llink=newNode;
 	cur->rlink=newNode;
 	newNode->llink=cur;
-	newNode->rlink=h;
-	h->llink=newNode;
+
 
 	return 1;
 }
@@ -205,18 +210,16 @@ int insertLast(listNode* h, int key) {
  */
 int deleteLast(listNode* h) {
 
-	listNode* cur=h;
+	listNode* cur=h->rlink;
 	while(cur->rlink!=h)
 	{
 		cur=cur->rlink;
 	}
 
-	if(cur!=h)
-	{
 		cur->llink->rlink=cur->rlink;
 		cur->rlink->llink=cur->llink;
 		free(cur);
-	}
+
 	return 1;
 }
 
@@ -244,6 +247,10 @@ int insertFirst(listNode* h, int key) {
  */
 int deleteFirst(listNode* h) {
 
+	listNode* cur=h->rlink;
+	h->rlink=cur->rlink;
+	cur->rlink->llink=cur->llink;
+	free(cur);
 
 	return 1;
 
@@ -256,6 +263,21 @@ int deleteFirst(listNode* h) {
 int invertList(listNode* h) {
 
 
+	listNode* cur=h;
+	listNode* middle=NULL;
+
+	do
+	{
+		middle=cur->llink;
+		cur->llink=cur->rlink;
+		cur->rlink=middle;
+		cur=cur->llink;
+
+	}while(cur!=h);
+
+
+
+
 	return 0;
 }
 
@@ -266,6 +288,43 @@ int invertList(listNode* h) {
  **/
 int insertNode(listNode* h, int key) {
 
+	listNode* newNode=(listNode*)malloc(sizeof(listNode));
+	newNode->key=key;
+	newNode->llink=NULL;
+	newNode->rlink=NULL;
+
+	listNode* cur=h->rlink;
+	while(cur->rlink!=h)
+	{
+		if(cur->key>key)
+		{
+			newNode->rlink=cur;
+			cur->llink->rlink=newNode;
+			newNode->llink=cur->llink;
+			cur->llink=newNode;
+			return 0;
+		}
+
+		cur=cur->rlink;
+
+	}
+
+	if(cur->key>key)
+	{
+		newNode->rlink=cur;
+		cur->llink->rlink=newNode;
+		newNode->llink=cur->llink;
+		cur->llink=newNode;
+
+	}
+	else
+	{
+		newNode->rlink=cur->rlink;
+		cur->rlink->llink=newNode;
+		cur->rlink=newNode;
+		newNode->llink=cur;
+
+	}
 	return 0;
 }
 
@@ -274,6 +333,28 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
+
+	listNode* cur=h->rlink;
+	while(cur->rlink!=h)
+	{
+		if(cur->key==key)
+		{
+			cur->llink->rlink=cur->rlink;
+			cur->rlink->llink=cur->llink;
+			free(cur);
+			return 0;
+		}
+
+		cur=cur->rlink;
+	}
+
+	if(cur->key==key)
+	{
+		cur->llink->rlink=cur->rlink;
+		cur->rlink->llink=cur->llink;
+		free(cur);
+
+	}
 
 	return 0;
 }
