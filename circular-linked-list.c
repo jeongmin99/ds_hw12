@@ -106,6 +106,10 @@ int main()
 	return 1;
 }
 
+/* 원형의 성질로 인해 앞 뒤에서 NULL검사를 안하는 것, 코드 표현의 용이
+ 더미노드 방식을 이용함으로써 노드가 비어있을때 앞에 넣는경우 중간에 넣는 경우 등등 여러 경우의수들을 따져서 구현하는 수고가 덜해짐 */
+
+
 
 int initialize(listNode** h) {
 
@@ -113,29 +117,31 @@ int initialize(listNode** h) {
 	if(*h != NULL)
 		freeList(*h);
 
+
 	/* headNode에 대한 메모리를 할당하여 리턴 */
-	*h = (listNode*)malloc(sizeof(listNode));
+	*h = (listNode*)malloc(sizeof(listNode));//더미 노드 생성
+	/*원형 리스트 초기상태*/
 	(*h)->rlink = *h;
 	(*h)->llink = *h;
-	(*h)->key = -9999;
+	(*h)->key = -9999;//키값이 무의미하다
 	return 1;
 }
 
 /* 메모리 해제 */
-int freeList(listNode* h){
+int freeList(listNode* h){/* h가 곧 리스트 구조 이므로 유실되어서는 안된다. */
 
 
-	listNode* p = h->llink;
-	listNode* tmp;
+	listNode* p = h->llink;//반복되기 전 끝에서 부터 시작한다.
+	listNode* tmp;//임시 노드
 
-	while (p != h)
+	while (p != h)//탐색노드가 h가 아닌동안
 	{
-		tmp = p;
-		p = p->llink;
-		free(tmp);
+		tmp = p;//tmp에 탐색 노드 위치
+		p = p->llink;//탐색 노드 이동
+		free(tmp);//tmp 해제
 	}
 
-	free(h);
+	free(h);//h해제
 	return 0;
 }
 
@@ -147,32 +153,32 @@ void printList(listNode* h) {
 
 	printf("\n---PRINT\n");
 
-	if(h == NULL) {
+	if(h == NULL) {//리스트가 없으면
 		printf("Nothing to print....\n");
 		return;
 	}
 
-	p = h->rlink;
+	p = h->rlink;//탐색노드를 더미노드 다음 노드로 위치
 
-	while(p != NULL && p != h) {
-		printf("[ [%d]=%d ] ", i, p->key);
-		p = p->rlink;
-		i++;
+	while(p != NULL && p != h) {//반복되기 전 마지막 노드까지
+		printf("[ [%d]=%d ] ", i, p->key);//인덱스 값과 키값 출력
+		p = p->rlink;//탐색 노드 이동
+		i++;//인덱스 증가
 	}
-	printf("  items = %d\n", i);
+	printf("  items = %d\n", i);//총 인덱스
 
 
 	/* print addresses */
 	printf("\n---checking addresses of links\n");
 	printf("-------------------------------\n");
-	printf("head node: [llink]=%p, [head]=%p, [rlink]=%p\n", h->llink, h, h->rlink);
+	printf("head node: [llink]=%p, [head]=%p, [rlink]=%p\n", h->llink, h, h->rlink);//헤드 노드의 주소값, 왼쪽 노드 주솟값, 오른쪽 노드 주솟값
 
 	i = 0;
 	p = h->rlink;
-	while(p != NULL && p != h) {
-		printf("[ [%d]=%d ] [llink]=%p, [node]=%p, [rlink]=%p\n", i, p->key, p->llink, p, p->rlink);
-		p = p->rlink;
-		i++;
+	while(p != NULL && p != h) {//반복되기 전 마지막 노드까지
+		printf("[ [%d]=%d ] [llink]=%p, [node]=%p, [rlink]=%p\n", i, p->key, p->llink, p, p->rlink);//헤드노드 이외의 노드 주솟값, 왼쪽 오른쪽 노드 주솟값
+		p = p->rlink;//노드 이동
+		i++;//인덱스 증가
 	}
 
 }
@@ -184,21 +190,22 @@ void printList(listNode* h) {
  */
 int insertLast(listNode* h, int key) {
 
+	/* 노드 생성 및 초기화 */
 	listNode* newNode=(listNode*)malloc(sizeof(listNode));
 	newNode->key=key;
 	newNode->llink=NULL;
 	newNode->rlink=NULL;
 
-	listNode* cur=h->rlink;
-	while(cur->rlink!=h)
+	listNode* cur=h->rlink;//탐색 노드 위치를 더미노드 다음 노드로 위치
+	while(cur->rlink!=h)//반복되기전 마지막 노드까지
 	{
-		cur=cur->rlink;
+		cur=cur->rlink;//탐색 노드 이동
 	}
 
-	newNode->rlink=cur->rlink;
-	cur->rlink->llink=newNode;
-	cur->rlink=newNode;
-	newNode->llink=cur;
+	newNode->rlink=cur->rlink;//새로운 노드의 오른쪽은 탐색 노드의 오른쪽
+	cur->rlink->llink=newNode;//탐색 노드 이후 노드의 왼쪽 링크는 새로운 노드
+	cur->rlink=newNode;//탐색 노드의 오른쪽 링크는 새로운 노드
+	newNode->llink=cur;//새로운 링크의 왼쪽 노드는 탐색 노드
 
 
 	return 1;
@@ -210,17 +217,17 @@ int insertLast(listNode* h, int key) {
  */
 int deleteLast(listNode* h) {
 
-	listNode* cur=h->rlink;
-	while(cur->rlink!=h)
+	listNode* cur=h->rlink;//탐색노드를 더미노드 다음 노드로 위치
+	while(cur->rlink!=h)//반복되기전 마지막 노드까지
 	{
-		cur=cur->rlink;
+		cur=cur->rlink;//탐색 노드 이동
 	}
 
-		cur->llink->rlink=cur->rlink;
-		cur->rlink->llink=cur->llink;
-		if(cur!=h)
+		cur->llink->rlink=cur->rlink;//탐색 노드 왼쪽노드의 오른쪽 링크는 탐색 노드의 오른쪽 노드
+		cur->rlink->llink=cur->llink;//탐색 노드의 오른쪽 노드의 왼쪽 링크는 탐색 노드의 왼쪽 링크
+		if(cur!=h)//h의 유실 방지
 		{
-			free(cur);
+			free(cur);//탐색 노드를 해제
 		}
 
 	return 1;
@@ -232,15 +239,16 @@ int deleteLast(listNode* h) {
  */
 int insertFirst(listNode* h, int key) {
 
+	/*노드 생성 및 초기화 */
 	listNode* newNode=(listNode*)malloc(sizeof(listNode));
 	newNode->key=key;
 	newNode->llink=NULL;
 	newNode->rlink=NULL;
 
-	newNode->rlink=h->rlink;
-	h->rlink->llink=newNode;
-	h->rlink=newNode;
-	newNode->llink=h;
+	newNode->rlink=h->rlink;//새 노드의 오른쪽 링크는 더미노드의 오른쪽 노드
+	h->rlink->llink=newNode;//더미노드의 오른쪽 노드의 왼쪽 링크는 새로운 노드
+	h->rlink=newNode;//더미노드의 오른쪽 링크는 새로운 노드
+	newNode->llink=h;//새로운 노드의 왼쪽 링크는 더미노드
 
 	return 1;
 }
@@ -250,12 +258,12 @@ int insertFirst(listNode* h, int key) {
  */
 int deleteFirst(listNode* h) {
 
-	listNode* cur=h->rlink;
-	h->rlink=cur->rlink;
-	cur->rlink->llink=cur->llink;
-	if(cur!=h)
+	listNode* cur=h->rlink;//탐색 노드를 더미노드의 다음 노드로 위치
+	h->rlink=cur->rlink;//더미노드의 오른쪽 링크는 탐색 노드의 오른쪽 노드
+	cur->rlink->llink=cur->llink;//탐색노드의 오른쪽 노드의 왼쪽 링크는 탐색 노드의 왼쪽 노드
+	if(cur!=h)//h의 유실 방지
 	{
-		free(cur);
+		free(cur);//탐색노드 해제
 	}
 
 	return 1;
@@ -269,15 +277,15 @@ int deleteFirst(listNode* h) {
 int invertList(listNode* h) {
 
 
-	listNode* cur=h;
-	listNode* middle=NULL;
+	listNode* cur=h;//탐색 노드를 더미노드에 위치
+	listNode* middle=NULL;//임시 노드 선언
 
-	do
+	do//처음에 cur=h이지만 이때도 실행해야한다.
 	{
-		middle=cur->llink;
-		cur->llink=cur->rlink;
-		cur->rlink=middle;
-		cur=cur->llink;
+		middle=cur->llink;//임시노드는 탐색노드의 왼쪽 노드
+		cur->llink=cur->rlink;//탐색 노드의 왼쪽 링크는 탐색 노드의 오른쪽 노드
+		cur->rlink=middle;//탐색 노드의 오른쪽 링크는 임시 노드
+		cur=cur->llink;//탐색 노드 이동
 
 	}while(cur!=h);
 
@@ -294,41 +302,43 @@ int invertList(listNode* h) {
  **/
 int insertNode(listNode* h, int key) {
 
+	/*노드 생성 및 초기화*/
 	listNode* newNode=(listNode*)malloc(sizeof(listNode));
 	newNode->key=key;
 	newNode->llink=NULL;
 	newNode->rlink=NULL;
 
-	listNode* cur=h->rlink;
-	while(cur->rlink!=h)
+	listNode* cur=h->rlink;//탐색노드를 더미노드 다음 노드로 지정
+	while(cur->rlink!=h)//반복 되기전 마지막 노드까지
 	{
-		if(cur->key>key)
+		if(cur->key>key)//탐색노드의 키값이 새 노드의 키값보다 크면
 		{
-			newNode->rlink=cur;
-			cur->llink->rlink=newNode;
-			newNode->llink=cur->llink;
-			cur->llink=newNode;
+			newNode->rlink=cur;//새 노드의 오른쪽 링크는 탐색 노드
+			cur->llink->rlink=newNode;//탐색노드의 왼쪽노드의 오른쪽 링크는 새로운 노드
+			newNode->llink=cur->llink;//새로운 노드의 왼쪽 링크는 탐색 노드의 왼쪽 노드
+			cur->llink=newNode;//탐색 노드의 왼쪽 링크는 새 노드
 			return 0;
 		}
 
-		cur=cur->rlink;
+		cur=cur->rlink;//노드 이동
 
 	}
 
-	if(cur->key>key)
+	/*반복 되기전 마지막 노드에서의 처리*/
+	if(cur->key>key)//탐색 노드 키값이 새 노드 키값 보다 크면
 	{
-		newNode->rlink=cur;
-		cur->llink->rlink=newNode;
-		newNode->llink=cur->llink;
-		cur->llink=newNode;
+		newNode->rlink=cur;//새노드의 오른쪽 링크는 탐색 노드
+		cur->llink->rlink=newNode;//탐색 노드의 왼쪽 노드의 오른쪽 링크는 새 노드
+		newNode->llink=cur->llink;//새 노드의 왼쪽 링크는 탐색 노드의 왼쪽 링크
+		cur->llink=newNode;//탐색 노드의 왼쪽 링크는 새로운 노드
 
 	}
 	else
 	{
-		newNode->rlink=cur->rlink;
-		cur->rlink->llink=newNode;
-		cur->rlink=newNode;
-		newNode->llink=cur;
+		newNode->rlink=cur->rlink;//새로운 노드의 오른쪽 링크는 탐색 노드의 오른쪽 노드
+		cur->rlink->llink=newNode;//탐색 노드의 오른쪽 노드의 왼쪽 링크는 새 노드
+		cur->rlink=newNode;//탐색 노드의 오른쪽 링크는 새 노드
+		newNode->llink=cur;//새 노드의 왼쪽 링크는 탐색 노드
 
 	}
 	return 0;
@@ -340,30 +350,31 @@ int insertNode(listNode* h, int key) {
  */
 int deleteNode(listNode* h, int key) {
 
-	listNode* cur=h->rlink;
-	while(cur->rlink!=h)
+	listNode* cur=h->rlink;//탐색 노드를 더미노드 다음 노드로 지정
+	while(cur->rlink!=h)//반복 되기 전 마지막 노드까지
 	{
-		if(cur->key==key)
+		if(cur->key==key)//키값을 찾으면
 		{
-			cur->llink->rlink=cur->rlink;
-			cur->rlink->llink=cur->llink;
-			if(cur!=h)
+			cur->llink->rlink=cur->rlink;//탐색 노드의 왼쪽 노드의 오른쪽 링크는 탐색 노드의 오른쪽 노드
+			cur->rlink->llink=cur->llink;//탐색 노드의 오른쪽 노드의 왼쪽 링크는 탐색 노드의 왼쪽 노드
+			if(cur!=h)//h의 유실 방지
 			{
-				free(cur);
+				free(cur);//탐색 노드 해제
 			}
 			return 0;
 		}
 
-		cur=cur->rlink;
+		cur=cur->rlink;//노드 이동
 	}
 
-	if(cur->key==key)
+	//반복되기전 마지막 노드에서의 처리
+	if(cur->key==key)//키값 찾으면
 	{
-		cur->llink->rlink=cur->rlink;
-		cur->rlink->llink=cur->llink;
-		if(cur!=h)
+		cur->llink->rlink=cur->rlink;//탐색 노드의 왼쪽 노드의 오른쪽 링크는 탐색 노드의 오른쪽 노드
+		cur->rlink->llink=cur->llink;//탐색 노드의 오른쪽 노드의 왼쪽 링크는 탐색 노드의 왼쪽 노드
+		if(cur!=h)//h의 유실 방지
 		{
-				free(cur);
+				free(cur);//탐색 노드 해제
 		}
 
 	}
