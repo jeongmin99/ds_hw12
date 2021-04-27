@@ -218,7 +218,10 @@ int deleteLast(listNode* h) {
 
 		cur->llink->rlink=cur->rlink;
 		cur->rlink->llink=cur->llink;
-		free(cur);
+		if(cur!=h)
+		{
+			free(cur);
+		}
 
 	return 1;
 }
@@ -250,7 +253,10 @@ int deleteFirst(listNode* h) {
 	listNode* cur=h->rlink;
 	h->rlink=cur->rlink;
 	cur->rlink->llink=cur->llink;
-	free(cur);
+	if(cur!=h)
+	{
+		free(cur);
+	}
 
 	return 1;
 
@@ -341,7 +347,10 @@ int deleteNode(listNode* h, int key) {
 		{
 			cur->llink->rlink=cur->rlink;
 			cur->rlink->llink=cur->llink;
-			free(cur);
+			if(cur!=h)
+			{
+				free(cur);
+			}
 			return 0;
 		}
 
@@ -352,7 +361,10 @@ int deleteNode(listNode* h, int key) {
 	{
 		cur->llink->rlink=cur->rlink;
 		cur->rlink->llink=cur->llink;
-		free(cur);
+		if(cur!=h)
+		{
+				free(cur);
+		}
 
 	}
 
