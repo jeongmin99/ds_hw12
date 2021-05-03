@@ -299,6 +299,7 @@ Node* searchIterative(Node* head, int key)
 int freeBST(Node* head)//이진 트리를 해제
 {
 	postorderFree(head->left);//후위 순회로 해제하는 함수 호출
+	free(head);//헤더노드 해제
 	return 0;
 }
 int postorderFree(Node* ptr)//후위 순회로 해제하는 함수
