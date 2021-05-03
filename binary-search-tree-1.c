@@ -347,6 +347,10 @@ Node* modifiedSearch(Node* head,int key)//노드를 삽입할 위치를 반환하는 함수
 				}
 			}
 		}
+		if(cur->key==key)//중복되는 값이 존재하면
+		{
+			return NULL;//NULL 리턴
+		}
 		return cur;//탐색 노드 리턴(리프노드)
 	}
 
