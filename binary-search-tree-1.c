@@ -31,7 +31,7 @@ int freeBST(Node* head); /* free all memories allocated to the tree */
 
 /* you may add your own defined functions if necessary */
 Node* modifiedSearch(Node* head,int key);
-
+int postorderFree(Node* ptr);
 int main()
 {
 	char command;
@@ -199,13 +199,45 @@ int insert(Node* head, int key)
 
 int deleteLeafNode(Node* head, int key)
 {
-	Node* cur=searchIterative(head, key);
-	if(cur->left==NULL && cur->right==NULL)
+	if(head->left!=NULL)
 	{
-
+		Node* cur=head->left;
+		Node* parent=cur;
+		while(cur!=NULL)
+		{
+			if(cur->key==key)
+			{
+				if(cur->left==NULL && cur->right==NULL)
+				{
+					if(parent->key>key)
+					{
+						parent->left=NULL;
+						free(cur);
+						return 0;
+					}
+					else
+					{
+						parent->right=NULL;
+						free(cur);
+						return 0;
+					}
+				}
+				else
+				{
+					printf("the node [%d] is not a leaf\n",cur->key);
+					return 0;
+				}
+			}
+			if(cur->key>key)
+			{
+				cur=cur->left;
+			}
+			else
+			{
+				cur=cur->right;
+			}
+		}
 	}
-
-
 	return 0;
 }
 
@@ -259,6 +291,18 @@ Node* searchIterative(Node* head, int key)
 
 int freeBST(Node* head)
 {
+	postorderFree(head->left);
+	return 0;
+}
+int postorderFree(Node* ptr)
+{
+	if(ptr!=NULL)
+	{
+		postorderFree(ptr->left);
+		postorderFree(ptr->right);
+		free(ptr);
+	}
+
 	return 0;
 }
 
