@@ -134,9 +134,9 @@ int initializeBST(Node** h) {
 	(*h)->right = *h;
 	(*h)->key = -9999;
 
-	top = -1;
+	top = -1;//stack top값 초기화
 
-	front = rear = -1;
+	front = rear = 0;//원형 큐로 할것이므로 0으로 초기화
 
 	return 1;
 }
@@ -159,16 +159,18 @@ void iterativeInorder(Node* node)
 {
 	while(1)
 	{
-		while(node!=NULL)
+		while(node!=NULL)//노드가 존재하는 동안
 		{
-			push(node);
-			node=node->left;
+			push(node);//노드를 스택에 push
+			node=node->left;//왼쪽 자식 노드로 이동
 		}
-		node=pop();
-		if(node==NULL) break;
+		/* 왼쪽 자식 끝에 도달*/
 
-		printf(" [%d] ",node->key);
-		node=node->right;
+		node=pop();//노드 하나를 pop
+		if(node==NULL) break;//노드가 없으면 순회 종료
+
+		printf(" [%d] ",node->key);//노드 출력
+		node=node->right;//노드를 오른쪽 노드로 이동
 	}
 }
 
@@ -177,25 +179,25 @@ void iterativeInorder(Node* node)
  */
 void levelOrder(Node* ptr)
 {
-	if(ptr==NULL) return;
+	if(ptr==NULL) return;//공백 트리이면 종료
 
-	enQueue(ptr);
+	enQueue(ptr);//큐에 루트 노드 삽입
 	while(1)
 	{
-		ptr=deQueue();
-		if(ptr)
+		ptr=deQueue();//큐에서 노드를 꺼내서
+		if(ptr)//존재하면
 		{
-			printf(" [%d] ",ptr->key);
-			if(ptr->left!=NULL)
+			printf(" [%d] ",ptr->key);//노드 출력
+			if(ptr->left!=NULL)//왼쪽 자식이 존재하면
 			{
-				enQueue(ptr->left);
+				enQueue(ptr->left);//그 자식노드를 삽입
 			}
-			if(ptr->right!=NULL)
+			if(ptr->right!=NULL)//오른쪽 자식이 존재하면
 			{
-				enQueue(ptr->right);
+				enQueue(ptr->right);//그 자식노드를 삽입
 			}
 		}
-		else break;
+		else break;//함수 종료
 	}
 
 }
@@ -248,153 +250,157 @@ int insert(Node* head, int key)
 int deleteNode(Node* head, int key)
 {
 
-	Node* cur=head->left;
-	Node* parent=cur;
+	Node* cur=head->left;//탐색노드를 루트노드로 초기화
+	Node* parent=NULL;//부모노드 선언
 
-	while(cur!=NULL)
+	while(cur!=NULL)//탐색노드가 존재하는 동안
 	{
-		if(cur->key==key)
+		if(cur->key==key)//삭제할 노드를 찾으면
 		{
-			if(cur->left==NULL && cur->right==NULL)
+			if(cur->left==NULL && cur->right==NULL)//그 노드가 리프노드이면
 			{
-				if(cur==head->left)
+				if(cur==head->left)//그 노드가 루트노드이면
 				{
-					head->left=NULL;
-					free(cur);
+					head->left=NULL;//루트노드를 지움
+					free(cur);//탐색 노드 해제
 					return 1;
 				}
 
-				if(parent->key>key)
+				if(parent->key>key)//삭제할 노드가 부모노드보다 작으면
 				{
-					parent->left=NULL;
-					free(cur);
+					parent->left=NULL;//부모노드의 왼쪽 자식 삭제
+					free(cur);//탐색노드 해제
 					return 1;
 				}
 				else
 				{
-					parent->right=NULL;
-					free(cur);
+					parent->right=NULL;//부모노드의 오른쪽 자식 삭제
+					free(cur);//탐색노드 해제
 					return 1;
 				}
 
 			}
-			else if((cur->left==NULL && cur->right!=NULL) || (cur->left!=NULL && cur->right==NULL))
+			else if((cur->left==NULL && cur->right!=NULL) || (cur->left!=NULL && cur->right==NULL))//자식노드가 1개이면
 			{
-				if(cur==head->left)
+				if(cur==head->left)//탐색노드가 루트노드이면
 				{
-					if(cur->left==NULL)
+					if(cur->left==NULL)//루트노드의 왼쪽 자식이 없으면
 					{
-						head->left=cur->right;
-						free(cur);
+						head->left=cur->right;//루트노드는 탐색노드의 오른쪽 자식
+						free(cur);//탐색 노드 해제
 						return 1;
 
 					}
 					else
 					{
-						head->left=cur->left;
-						free(cur);
+						head->left=cur->left;//루트노드는 탐색노드의 왼쪽 자식
+						free(cur);//탐색 노드 해제
 						return 1;
 					}
 
 				}
 
-				if(parent->key>key)
+				if(parent->key>key)//삭제할 노드가 부모노드보다 작으면
 				{
-					if(cur->left==NULL)
+					if(cur->left==NULL)//탐색 노드의 왼쪽 자식이 없으면
 					{
-						parent->left=cur->right;
-						free(cur);
+						parent->left=cur->right;//부모노드의 왼쪽 자식은 탐색노드의 오른쪽 자식
+						free(cur);//탐색노드 해제
 						return 1;
 					}
 					else
 					{
-						parent->left=cur->left;
-						free(cur);
+						parent->left=cur->left;//부모노드의 왼쪽 자식은 탐색노드의 왼쪽 자식
+						free(cur);//탐색 노드 해제
 						return 1;
 					}
 
 				}
 				else
 				{
-					if(cur->left==NULL)
+					if(cur->left==NULL)//탐색노드의 왼쪽 자식이 없으면
 					{
-						parent->right=cur->right;
-						free(cur);
+						parent->right=cur->right;//부모노드의 오른쪽 자식은 탐색 노드의 오른쪽 자식
+						free(cur);//탐색 노드 해제
 						return 1;
 					}
 					else
 					{
-						parent->right=cur->left;
-						free(cur);
+						parent->right=cur->left;//부모노드의 오른쪽 자신은 탐색노드의 왼쪽 자식
+						free(cur);//탐색 노드 해제
 						return 1;
 					}
 				}
 
 
 			}
-			else
+			else//자식이 2개이면
 			{
-				Node* LeftSubMax=cur->left;
-				Node* LeftSubMaxParent=NULL;
-				while(LeftSubMax->right!=NULL)
+				Node* RightSubMin=cur->right;//오른쪽 서브트리의 최솟값 노드 선언
+				Node* RightSubMinParent=NULL;//그 최솟값의 부모노드 선언
+				while(RightSubMin->left!=NULL)//최솟값 노드보다 작은 값이 존재하는 동안
 				{
-					LeftSubMaxParent=LeftSubMax;
-					LeftSubMax=LeftSubMax->right;
+					RightSubMinParent=RightSubMin;//부모노드 갱신
+					RightSubMin=RightSubMin->left;//최솟값 노드를 그 작은 값으로 이동
 				}
 
-				//왼쪽서브트리에서 가장큰 원소를 찾는다
-				cur->key=LeftSubMax->key;
 
-				if(LeftSubMax==cur->left)
+				cur->key=RightSubMin->key;//최솟값노드의 키값을 탐색노드에 복사
+
+				if(RightSubMin==cur->right)//최솟값 노드가 오른쪽 서브트리의 루트노드인 경우
 				{
-					if(LeftSubMax->left==NULL)
+					if(RightSubMin->right==NULL)//최솟값노드의 오른쪽이 없으면
 					{
-						cur->left=NULL;
-						free(LeftSubMax);
+						cur->right=NULL;//탐색노드의 오른쪽노드 삭제
+						free(RightSubMin);//최솟값 노드 해제
 						return 1;
 					}
 					else
 					{
-						cur->left=LeftSubMax->left;
-						free(LeftSubMax);
+						cur->right=RightSubMin->right;//탐색노드의 오른쪽 노드는 최솟값 노드의 오른쪽 자식
+						free(RightSubMin);//최솟값 노드 해제
 						return 1;
 					}
 				}
 
-				if(LeftSubMax->left==NULL)
+				if(RightSubMin->right==NULL)//최솟값 노드의 오른쪽 자식이 없으면
 				{
-					LeftSubMaxParent->right=NULL;
+					RightSubMinParent->left=NULL;//최솟값 노드의 부모노드의 왼쪽 자식 삭제
 
 				}
 				else
 				{
-					LeftSubMaxParent->right=LeftSubMax->left;
+					RightSubMinParent->left=RightSubMin->right;//최솟값 노드의 부모노드의 왼쪽 자식은 최솟값 노드의 오른쪽 자식
 				}
-				//링크 연결
-				free(LeftSubMax);//왼쪽서브트리에 있는 가장큰원소 삭제
+
+				free(RightSubMin);//최솟값 노드 해제
 				return 1;
 
 			}
 		}
 
 
-		parent=cur;
-		if(cur->key<key)
+		parent=cur;//부모노드 갱신
+		if(cur->key<key)//탐색노드보다 찾는 키값이 크면
 		{
-			cur=cur->right;
+			cur=cur->right;//오른쪽 으로 이동
 		}
 		else
 		{
-			cur=cur->left;
+			cur=cur->left;//왼쪽으로 이동
 		}
 	}
 
+	/*못찾은 경우*/
+	printf("no node for key [%d]\n",key);
+	return -1;
 
 }
 
 
-void freeNode(Node* ptr)
+void freeNode(Node* ptr)//모든 노드 해제
 {
+	/* 후위 순회를 통한 해제*/
 	if(ptr) {
 		freeNode(ptr->left);
 		freeNode(ptr->right);
@@ -402,20 +408,20 @@ void freeNode(Node* ptr)
 	}
 }
 
-int freeBST(Node* head)
+int freeBST(Node* head)//트리 구조 해제
 {
 
-	if(head->left == head)
+	if(head->left == head)//트리에 노드가 없으면
 	{
-		free(head);
+		free(head);//트리구조 자체를 해제
 		return 1;
 	}
 
-	Node* p = head->left;
+	Node* p = head->left;//탐색노드에 루트노드 대입
 
-	freeNode(p);
+	freeNode(p);//freeNode 호출
 
-	free(head);
+	free(head);//트리구조 해제
 	return 1;
 }
 
@@ -423,20 +429,20 @@ int freeBST(Node* head)
 
 Node* pop()
 {
-	if(top>-1)
+	if(top>-1)//top이 -1보다 크면
 	{
-		return stack[top--];
+		return stack[top--];//스택 요소 pop
 	}
 
-	return NULL;
+	return NULL;//pop 실패
 
 }
 
 void push(Node* aNode)
 {
-	if(top+1<MAX_STACK_SIZE)
+	if(top+1<MAX_STACK_SIZE)//top이 스택 최대 사이즈에 도달하지 않은 경우
 	{
-		stack[++top]=aNode;
+		stack[++top]=aNode;//스택에 aNode push
 	}
 
 }
@@ -445,30 +451,34 @@ void push(Node* aNode)
 
 Node* deQueue()
 {
-	if(front!=rear)
+	if(front!=rear)//큐가 공백이 아니면
 	{
-		front=(front+1)%MAX_QUEUE_SIZE;
-		return queue[front];
+		front=(front+1)%MAX_QUEUE_SIZE;//front값 앞으로 이동
+		return queue[front];//큐에서 데이터 꺼냄
 
 	}
 
-	return NULL;
+	return NULL;//dequeue 실패
 
 
 }
 
 void enQueue(Node* aNode)
 {
-	if((rear+1)%MAX_QUEUE_SIZE!=front)
+	if((rear+1)%MAX_QUEUE_SIZE!=front)//큐가 full이 아니면
 	{
-		rear=(rear+1)%MAX_QUEUE_SIZE;
-		queue[rear]=aNode;
+		rear=(rear+1)%MAX_QUEUE_SIZE;//rear값 앞으로 이동
+		queue[rear]=aNode;//큐에 데이터 삽입
 	}
 
 }
 
 void printStack()
 {
+	for(int i=0;i<=top;i++)
+	{
+		printf(" [%d] ",stack[i]);
+	}
 
 }
 
