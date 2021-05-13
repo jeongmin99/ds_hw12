@@ -143,7 +143,7 @@ int initializeBST(Node** h) {
 
 
 
-void recursiveInorder(Node* ptr)
+void recursiveInorder(Node* ptr)//재귀를 이용한 중위 순회
 {
 	if(ptr) {
 		recursiveInorder(ptr->left);
@@ -473,11 +473,11 @@ void enQueue(Node* aNode)
 
 }
 
-void printStack()
+void printStack()//스택안에 있는 노드의 키값 출력
 {
 	for(int i=0;i<=top;i++)
 	{
-		printf(" [%d] ",stack[i]);
+		printf(" [%d] ",stack[i]->key);
 	}
 
 }
