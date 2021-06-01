@@ -226,15 +226,15 @@ int bubbleSort(int *a)
 	printf("Bubble Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a);//정렬 전
 
-	for(i = 0; i < MAX_ARRAY_SIZE; i++)
+	for(i = 0; i < MAX_ARRAY_SIZE; i++)//배열 사이즈만큼 반복
 	{
-		for (j = 0; j < MAX_ARRAY_SIZE; j++)
+		for (j = 0; j < MAX_ARRAY_SIZE; j++)//배열에 각각의 요소에 접근하기 위해 반복
 		{
-			if (a[j-1] > a[j])
+			if (a[j-1] > a[j])//j기준 앞의 원소가 j의값보다 크면
 			{
-				t = a[j-1];
+				t = a[j-1];    /* swap */
 				a[j-1] = a[j];
 				a[j] = t;
 			}
@@ -242,68 +242,70 @@ int bubbleSort(int *a)
 	}
 
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a);//정렬 후
 
 	return 0;
 }
 
-int shellSort(int *a)
+int shellSort(int *a)//셸 정렬
 {
 	int i, j, k, h, v;
 
 	printf("Shell Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a);//정렬 전
 
-	for (h = MAX_ARRAY_SIZE/2; h > 0; h /= 2)
+	for (h = MAX_ARRAY_SIZE/2; h > 0; h /= 2)//간격을 배열에 1/2로 둔 후 단계가 진행될 때마다 간격을 1/2한다.
 	{
 		for (i = 0; i < h; i++)
 		{
-			for(j = i + h; j < MAX_ARRAY_SIZE; j += h)
+			for(j = i + h; j < MAX_ARRAY_SIZE; j += h)//j가 하나씩이 아닌 간격 만큼 증가
 			{
-				v = a[j];
-				k = j;
-				while (k > h-1 && a[k-h] > v)
+				/* 그 간격을 기준으로 삽입정렬이 실행된다. */
+				v = a[j];//v는 j번째 값
+				k = j;//k를 이용해 j 이전 인덱스 앞부분 조사
+				while (k > h-1 && a[k-h] > v)	//k-h번 값이 현재 조사하는 값보다 크면
 				{
-					a[k] = a[k-h];
+					a[k] = a[k-h];//한칸 뒤로 민다.
 					k -= h;
 				}
-				a[k] = v;
+				a[k] = v;//k의 자리에 값 대입
 			}
 		}
 	}
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a);//정렬 후
 
 	return 0;
 }
 
-int quickSort(int *a, int n)
+int quickSort(int *a, int n)//퀵 정렬
 {
 	int v, t;
 	int i, j;
 
 	if (n > 1)
 	{
-		v = a[n-1];
-		i = -1;
-		j = n - 1;
+		v = a[n-1];//피벗은 맨 오른쪽
+		i = -1;//left는 배열의 맨 왼쪽 -1
+		j = n - 1;//right는 배열의 맨 오른쪽
 
 		while(1)
 		{
-			while(a[++i] < v);
-			while(a[--j] > v);
+			while(a[++i] < v);//i번째 값이 피벗보다 작으면 i값 증가
+			while(a[--j] > v);//j번째 값이 피벗보다 크면 j값 증가
 
-			if (i >= j) break;
-			t = a[i];
+			if (i >= j) break;//i와 j가 교차되면 while문 빠져나감
+			t = a[i];/*i번째 값과 j번째 값 swap*/
 			a[i] = a[j];
 			a[j] = t;
 		}
-		t = a[i];
+		t = a[i];/* 피벗과 교자된 부분에서의 값을 swap*/
 		a[i] = a[n-1];
 		a[n-1] = t;
 
+		//교차된 부분을 기준으로 두개로 나누어 퀵소트 재귀 호출
 		quickSort(a, i);
 		quickSort(a+i+1, n-i-1);
 	}
@@ -312,11 +314,11 @@ int quickSort(int *a, int n)
 	return 0;
 }
 
-int hashCode(int key) {
+int hashCode(int key)//해시 함수(제산 함수를 이용) {
    return key % MAX_HASH_TABLE_SIZE;
 }
 
-int hashing(int *a, int **ht)
+int hashing(int *a, int **ht)//해싱을 진행 하는 함수(데이터 삽입시 선형조사법 이용)
 {
 	int *hashtable = NULL;
 
@@ -328,7 +330,7 @@ int hashing(int *a, int **ht)
 		hashtable = *ht;	/* hash table이 NULL이 아닌경우, table 재활용, reset to -1 */
 	}
 
-	for(int i = 0; i < MAX_HASH_TABLE_SIZE; i++)
+	for(int i = 0; i < MAX_HASH_TABLE_SIZE; i++)//해시 테이블 값들 -1로 초기화
 		hashtable[i] = -1;
 
 	/*
@@ -341,35 +343,35 @@ int hashing(int *a, int **ht)
 	int index = -1;
 	for (int i = 0; i < MAX_ARRAY_SIZE; i++)
 	{
-		key = a[i];
-		hashcode = hashCode(key);
+		key = a[i];//a의 i번째 인덱스를 키로 한다.
+		hashcode = hashCode(key);//해시 함수를 통해 키에 따른 해시코드(주소) 부여.
 		/*
 		printf("key = %d, hashcode = %d, hashtable[%d]=%d\n", key, hashcode, hashcode, hashtable[hashcode]);
 		*/
-		if (hashtable[hashcode] == -1)
+		if (hashtable[hashcode] == -1)//해시코드(주소)에 대한 테이블에 값이 없으면
 		{
-			hashtable[hashcode] = key;
+			hashtable[hashcode] = key;//해시코드(주소)에 따른 테이블에 키값을 대입
 		} else 	{
 
-			index = hashcode;
+			index = hashcode;//index는 해시코드(주소)
 
-			while(hashtable[index] != -1)
+			while(hashtable[index] != -1)//index에 따른 해시 테이블 값이 존재하면(빈 버킷이 없으면)
 			{
-				index = (++index) % MAX_HASH_TABLE_SIZE;
+				index = (++index) % MAX_HASH_TABLE_SIZE;//index값을 증가시켜 제산함수 재시행(다른 버킷을 찾는다)
 				/*
 				printf("index = %d\n", index);
 				*/
 			}
-			hashtable[index] = key;
+			hashtable[index] = key;//index(주소)에 따른 테이블값에 키를 대입
 		}
 	}
 
 	return 0;
 }
 
-int search(int *ht, int key)
+int search(int *ht, int key)//선형 조사법 탐색함수
 {
-	int index = hashCode(key);
+	int index = hashCode(key);//키값에 따른 해시코드를 구해 인덱스(주소)를 정함
 
 	if(ht[index] == key)
 		return index;
