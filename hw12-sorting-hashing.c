@@ -45,9 +45,9 @@ int main()
 	int *hashtable = NULL;
 	int key = -1;
 	int index = -1;
-
+	setvbuf(stdout,NULL,_IONBF,0);
 	srand(time(NULL));
-
+	printf("[----- [이정민] [2018038030] -----]\n");
 	do{
 		printf("----------------------------------------------------------------\n");
 		printf("                        Sorting & Hashing                       \n");
@@ -64,51 +64,51 @@ int main()
 
 		switch(command) {
 		case 'z': case 'Z':
-			initialize(&array);
+			initialize(&array);//배열 초기화(배열 랜덤값 배정)
 			break;
 		case 'q': case 'Q':
-			freeArray(array);
+			freeArray(array);//배열 메모리 해제
 			break;
 		case 's': case 'S':
-			selectionSort(array);
+			selectionSort(array);//선택 정렬
 			break;
 		case 'i': case 'I':
-			insertionSort(array);
+			insertionSort(array);//삽입 정렬
 			break;
 		case 'b': case 'B':
-			bubbleSort(array);
+			bubbleSort(array);//버블 정렬
 			break;
 		case 'l': case 'L':
-			shellSort(array);
+			shellSort(array);//셸 정렬
 			break;
 		case 'k': case 'K':
 			printf("Quick Sort: \n");
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
-			quickSort(array, MAX_ARRAY_SIZE);
+			printArray(array);//배열 출력
+			quickSort(array, MAX_ARRAY_SIZE);//퀵 정렬
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
+			printArray(array);//정렬 후 배열 출력
 
 			break;
 
 		case 'h': case 'H':
 			printf("Hashing: \n");
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
-			hashing(array, &hashtable);
-			printArray(hashtable);
+			printArray(array);//배열 출력
+			hashing(array, &hashtable);//해싱을 통해 해시값에 따른 키값 배정
+			printArray(hashtable);//해시 테이블 출력
 			break;
 
 		case 'e': case 'E':
 			printf("Your Key = ");
-			scanf("%d", &key);
-			printArray(hashtable);
-			index = search(hashtable, key);
+			scanf("%d", &key);//검색할 키값 입력
+			printArray(hashtable);//해시테이블 출력
+			index = search(hashtable, key);//키값에 따른 인데그
 			printf("key = %d, index = %d,  hashtable[%d] = %d\n", key, index, index, hashtable[index]);
 			break;
 
 		case 'p': case 'P':
-			printArray(array);
+			printArray(array);//배열 출력
 			break;
 		default:
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
@@ -152,7 +152,7 @@ void printArray(int *a)
 		return;
 	}
 	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
-		printf("a[%02d] ", i);
+		printf("a[%02d] ", i);//인덱스 값 출력
 	printf("\n");
 	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
 		printf("%5d ", a[i]);//a배열 값 출력
@@ -230,9 +230,9 @@ int bubbleSort(int *a)
 
 	for(i = 0; i < MAX_ARRAY_SIZE; i++)//배열 사이즈만큼 반복
 	{
-		for (j = 0; j < MAX_ARRAY_SIZE; j++)//배열에 각각의 요소에 접근하기 위해 반복
+		for (j =MAX_ARRAY_SIZE-1;j>i;j--)//배열에 각각의 요소에 접근하기 위해 반복
 		{
-			if (a[j-1] > a[j])//j기준 앞의 원소가 j의값보다 크면
+			if (a[j-1] > a[j])//j기준 인접 원소가 현재원소보다 크면
 			{
 				t = a[j-1];    /* swap */
 				a[j-1] = a[j];
@@ -314,7 +314,8 @@ int quickSort(int *a, int n)//퀵 정렬
 	return 0;
 }
 
-int hashCode(int key)//해시 함수(제산 함수를 이용) {
+int hashCode(int key)//해시 함수(제산 함수를 이용)
+{
    return key % MAX_HASH_TABLE_SIZE;
 }
 
@@ -373,14 +374,14 @@ int search(int *ht, int key)//선형 조사법 탐색함수
 {
 	int index = hashCode(key);//키값에 따른 해시코드를 구해 인덱스(주소)를 정함
 
-	if(ht[index] == key)
-		return index;
+	if(ht[index] == key)//키값과 인덱스에 따른 해시테이블 값이 일치하면
+		return index;//인덱스(주소) 리턴
 
-	while(ht[++index] != key)
+	while(ht[++index] != key)//index값을 증가시키면서
 	{
-		index = index % MAX_HASH_TABLE_SIZE;
+		index = index % MAX_HASH_TABLE_SIZE;//해시코드를 새로 생성
 	}
-	return index;
+	return index;//인덱스(주소) 리턴
 }
 
 
